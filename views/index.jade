@@ -1,0 +1,44 @@
+!!! 5
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        title WebSockets Demo
+        link(rel='stylesheet', href='css/app.css')
+        link(href="//netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css", rel="stylesheet")
+        link(href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css", rel="stylesheet")
+    body
+        .page-header
+            h1 WebSockets Demo
+        .container
+            #usernameRequest
+                #statusMessage.alert.alert-info.hidden
+                    strong Nope!
+                    span Hello there!
+                input#username.form-control(type="text", placeholder="Username")
+                button#join.btn.btn-block(disabled) Join chatroom
+
+            #chatroom.hidden
+                .row
+                    .col-xs-10
+                        ul#messageList.list-unstyled
+                    .col-xs-2
+                        h4 Users
+                        hr
+                        ul#userList.list-unstyled
+                .row
+                    .input-group
+                        input#message.form-control(type="text", placeholder="Enter your message here...")
+                        .input-group-btn
+                            button#send.btn Send
+
+
+
+            //.input-append.input-block-level
+                input#message.input-xxlarge(type="text", placeholder="Type your message here...")
+                button#send.btn Send
+
+        //script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js")
+        script(src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
+        script(src="//cdnjs.cloudflare.com/ajax/libs/socket.io/0.9.16/socket.io.min.js")
+        script(src='/js/overrides.js')
+        script(src='/js/app.js')

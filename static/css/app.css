@@ -1,0 +1,18 @@
+#messageList {
+    border: 1px solid #ccc;
+    height: 40rem; /* TODO: Should be relative to window height */
+}
+
+#messageList{
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.systemMessage {
+    font-weight: bolder;
+    color: darkblue;
+}
+
+.red {
+    color: darkred;
+}
