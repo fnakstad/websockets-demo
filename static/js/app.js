@@ -3,18 +3,16 @@ $(document).ready(function(){
     var wsServer = 'http://localhost:8000';
     var socket = io.connect(wsServer);
     var username
-        , statusMessage = $('#statusMessage')
         , joinButton = $('button#join')
         , sendButton = $('button#send')
         , inputMessage = $('input#message');
 
     socket.on('connecting', function() {
-        statusMessage.html("Loading");
-        statusMessage.show();
+        showStatusMessage("Loading...");
     });
 
     socket.on('connect', function() {
-        statusMessage.hide();
+        hideStatusMessage();
 
         joinButton.click(function() {
             socket.emit('usernameRequest', {
@@ -23,6 +21,17 @@ $(document).ready(function(){
         });
         joinButton.prop('disabled', false);
     });
+
+    socket.on('disconnect', function() {
+        console.log('Server closed connection');
+    });
+
+    socket.on('error', function() {
+        console.log('An error occurred...');
+    });
+
+    //
+    // Custom events
 
     socket.on('usernameRequestResult', function(data) {
         if(data.accepted) {
@@ -50,7 +59,7 @@ $(document).ready(function(){
             });
         }
         else {
-            // Show message, make input box red?
+            showStatusMessage('The requested username is already taken', 'danger');
         }
     });
 
@@ -73,14 +82,6 @@ $(document).ready(function(){
         addSystemMessage('{0} just left the chatroom :('.format(data.username));
         removeUser(data.username);
     });
-
-    socket.on('disconnect', function() {
-        console.log('Server closed connection');
-    });
-
-    socket.on('error', function() {
-        console.log('An error occurred...');
-    });
 });
 
 function addMessage(message) {
@@ -97,4 +98,22 @@ function addUser(username) {
 
 function removeUser(username) {
     $('[data-user="{0}"]'.format(username)).remove();
+};
+
+function showStatusMessage(message, type) {
+    var statusMessage = $('#statusMessage');
+    statusMessage.html(message);
+
+    if(type === "danger")
+        statusMessage.addClass('alert-danger');
+    else
+        statusMessage.addClass('alert-info');
+
+    statusMessage.show();
+};
+
+function hideStatusMessage() {
+    var statusMessage = $('#statusMessage');
+    statusMessage.hide();
+    statusMessage.removeClass('alert-info alert-danger');
 };

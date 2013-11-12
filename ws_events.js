@@ -8,17 +8,15 @@ module.exports = function(io) {
         //socket.broadcast.emit('join', { id: socket.id });
 
         socket.on('usernameRequest', function(data) {
-            var username = data.username;
+            var username = data.username
+                , available = !_.contains(users, username);
 
-            if(_.contains(users, username))
-                socket.emit('usernameRequestResult', {
-                    accepted: false
-                });
-            else {
-                socket.emit('usernameRequestResult', {
-                    accepted: true,
-                    username: username
-                });
+            socket.emit('usernameRequestResult', {
+                accepted: available,
+                username: username
+            });
+
+            if(available) {
                 users[socket.id] = username;
                 socket.join('chatroom');
 
@@ -26,6 +24,7 @@ module.exports = function(io) {
                     socket.emit('userList', {
                         users: _.without(_.values(users), username)
                     });
+
                 socket.broadcast.to('chatroom').emit('newUser', {
                     username: username
                 });
@@ -40,11 +39,13 @@ module.exports = function(io) {
         });
 
         socket.on('disconnect', function() {
-            var username = users[socket.id];
-            users = _.omit(users, socket.id);
-            socket.broadcast.to('chatroom').emit('userDisconnect', {
-                username: username
-            });
+            if(users[socket.id]) {
+                var username = users[socket.id];
+                users = _.omit(users, socket.id);
+                socket.broadcast.to('chatroom').emit('userDisconnect', {
+                    username: username
+                });
+            }
         });
     });
 };

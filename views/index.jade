@@ -11,7 +11,7 @@ html(lang='en')
             h1 WebSockets Demo
         .container
             #usernameRequest
-                #statusMessage.alert.alert-info.hidden
+                #statusMessage.alert.hidden
                     strong Nope!
                     span Hello there!
                 input#username.form-control(type="text", placeholder="Username")
@@ -30,12 +30,6 @@ html(lang='en')
                         input#message.form-control(type="text", placeholder="Enter your message here...")
                         .input-group-btn
                             button#send.btn Send
-
-
-
-            //.input-append.input-block-level
-                input#message.input-xxlarge(type="text", placeholder="Type your message here...")
-                button#send.btn Send
 
         //script(src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js")
         script(src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
