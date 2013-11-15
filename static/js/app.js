@@ -5,7 +5,8 @@ $(document).ready(function(){
     var username
         , joinButton = $('button#join')
         , sendButton = $('button#send')
-        , inputMessage = $('input#message');
+        , inputMessage = $('input#message')
+        , inputUsername = $('input#username');
 
     socket.on('connecting', function() {
         showStatusMessage("Loading...");
@@ -14,9 +15,15 @@ $(document).ready(function(){
     socket.on('connect', function() {
         hideStatusMessage();
 
+        inputUsername.bind('keyup change',function() {
+            socket.emit('usernameCheck', {
+                username: inputUsername.val()
+            });
+        });
+
         joinButton.click(function() {
-            socket.emit('usernameRequest', {
-                username: $('input#username').val()
+            socket.emit('joinRequest', {
+                username: inputUsername.val()
             });
         });
         joinButton.prop('disabled', false);
@@ -33,10 +40,21 @@ $(document).ready(function(){
     //
     // Custom events
 
-    socket.on('usernameRequestResult', function(data) {
+    socket.on('usernameCheckResult', function(data) {
+        if(data.available) {
+            showStatusMessage("The username <strong>{0}</strong> is available!".format(data.username), 'success');
+            joinButton.prop('disabled', false);
+        }
+        else {
+            showStatusMessage("The username <strong>{0}</strong> is not available".format(data.username), 'danger');
+            joinButton.prop('disabled', true);
+        }
+    });
+
+    socket.on('joinRequestResult', function(data) {
         if(data.accepted) {
             username = data.username;
-            $('#usernameRequest').hide();
+            $('#joinRequest').hide();
             $('#chatroom').show();
             addSystemMessage('Hi {0}, and welcome to the chatroom.'.format(username));
             addUser('<strong>{0}</strong>'.format(username));
@@ -104,8 +122,11 @@ function showStatusMessage(message, type) {
     var statusMessage = $('#statusMessage');
     statusMessage.html(message);
 
+    statusMessage.removeClass('alert-info alert-danger alert-success');
     if(type === "danger")
         statusMessage.addClass('alert-danger');
+    else if(type === "success")
+        statusMessage.addClass('alert-success');
     else
         statusMessage.addClass('alert-info');
 
@@ -115,5 +136,5 @@ function showStatusMessage(message, type) {
 function hideStatusMessage() {
     var statusMessage = $('#statusMessage');
     statusMessage.hide();
-    statusMessage.removeClass('alert-info alert-danger');
+    statusMessage.removeClass('alert-info alert-danger alert-success');
 };

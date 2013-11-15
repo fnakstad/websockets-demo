@@ -4,19 +4,29 @@ module.exports = function(io) {
 
     var users = {};
 
+    function checkUsername(username) {
+        return !_.contains(users, username);
+    }
+
     io.sockets.on('connection', function(socket) {
-        //socket.broadcast.emit('join', { id: socket.id });
 
-        socket.on('usernameRequest', function(data) {
-            var username = data.username
-                , available = !_.contains(users, username);
+        socket.on('usernameCheck', function(data) {
+            socket.emit('usernameCheckResult', {
+                available: checkUsername(data.username),
+                username: data.username
+            });
+        });
 
-            socket.emit('usernameRequestResult', {
-                accepted: available,
+        socket.on('joinRequest', function(data) {
+            var username = data.username,
+                accepted = checkUsername(username);
+
+            socket.emit('joinRequestResult', {
+                accepted: accepted,
                 username: username
             });
 
-            if(available) {
+            if(accepted) {
                 users[socket.id] = username;
                 socket.join('chatroom');
 

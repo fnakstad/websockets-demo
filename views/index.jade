@@ -10,12 +10,10 @@ html(lang='en')
         .page-header
             h1 WebSockets Demo
         .container
-            #usernameRequest
-                #statusMessage.alert.hidden
-                    strong Nope!
-                    span Hello there!
+            #joinRequest
                 input#username.form-control(type="text", placeholder="Username")
                 button#join.btn.btn-block(disabled) Join chatroom
+                #statusMessage.alert.hidden
 
             #chatroom.hidden
                 .row
